@@ -1,3 +1,4 @@
+import pytest
 import tkinter as tk
 
 
@@ -114,3 +115,31 @@ if __name__ == "__main__":
     controller = CalculatorController(model, view)
     view.set_controller(controller)
     view.mainloop()
+
+
+@pytest.fixture
+def calculator():
+    return CalculatorModel()
+
+
+@pytest.mark.parametrize(
+    "expression, expected",
+    [
+        ("2+3", "5"),
+        ("10-4", "6"),
+        ("3*7", "21"),
+        ("20/4", "5.0"),
+        ("10//3", "3"),
+        ("10%3", "1"),
+    ],
+)
+def test_operations(calculator, expression, expected):
+    calculator.add(expression)
+    result = calculator.calculate()
+    assert result == expected
+
+
+def test_clear(calculator):
+    calculator.add("10+5")
+    calculator.clear()
+    assert calculator.expression == ""
